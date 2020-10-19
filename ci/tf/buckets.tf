@@ -8,14 +8,8 @@ resource "aws_s3_bucket" "ci" {
   }
 }
 
-resource "aws_s3_bucket" "blobstore" {
-  bucket        = "fluentd-blobstore"
-  acl           = "public-read"
-  force_destroy = true
-
-  versioning {
-    enabled = true
-  }
+data "aws_s3_bucket" "blobstore" {
+  bucket = "fluentd-blobstore"
 }
 
 resource "aws_s3_bucket_policy" "blob-public-read" {
