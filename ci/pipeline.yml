@@ -1,0 +1,152 @@
+---
+resource_types:
+- name: terraform
+  type: docker-image
+  source:
+    repository: ljfranklin/terraform-resource
+
+resources:
+- name: fluentd-boshrelease
+  type: git
+  source:
+    uri: git@github.com:EngineerBetter/fluentd-boshrelease.git
+    branch: master
+    private_key: ((github_private_key))
+    ignore_paths:
+    - .final_builds/
+    - releases/
+
+- name: fluentd-boshrelease-push
+  type: git
+  source:
+    uri: git@github.com:EngineerBetter/fluentd-boshrelease.git
+    branch: master
+    private_key: ((github_private_key))
+
+- name: version
+  type: semver
+  source:
+    key: version
+    << : &candidate-s3-creds
+      bucket: fluentd-boshreleases
+      access_key_id: ((concourse_ci_s3_access_key))
+      secret_access_key: ((concourse_ci_s3_secret_key))
+      region_name: eu-west-1
+
+- name: candidate-release
+  type: s3
+  source:
+    versioned_file: "fluentd-dev-release.tgz"
+    << : *candidate-s3-creds
+
+- name: final-release
+  type: s3
+  source:
+    regexp: "fluentd-final-release-(.*).tgz"
+    << : *candidate-s3-creds
+
+- name: ci-tf
+  type: terraform
+  source:
+    terraform_source: fluentd-boshrelease/ci/tf/
+    storage:
+      bucket: fluentd-ci
+      bucket_path: /terraform/
+      access_key_id: ((concourse_ci_s3_access_key))
+      secret_access_key: ((concourse_ci_s3_secret_key))
+      region_name: eu-west-1
+      server_side_encryption: AES256
+    env:
+      AWS_ACCESS_KEY_ID: ((concourse_ci_s3_access_key))
+      AWS_SECRET_ACCESS_KEY: ((concourse_ci_s3_secret_key))
+      AWS_DEFAULT_REGION: eu-west-1
+
+jobs:
+- name: set-pipeline
+  serial: true
+  plan:
+  - get: fluentd-boshrelease
+    trigger: true
+  - set_pipeline: self
+    file: fluentd-boshrelease/ci/pipeline.yml
+
+- name: create-buckets
+  serial: true
+  plan:
+  - get: fluentd-boshrelease
+    trigger: true
+    passed:
+    - set-pipeline
+  - put: ci-tf
+    params:
+      env_name: whevs
+
+- name: create-release
+  plan:
+    - get: fluentd-boshrelease
+      trigger: true
+      passed:
+      - create-buckets
+    - task: create
+      file: fluentd-boshrelease/ci/tasks/create-candidate.yml
+    - put: candidate-release
+      params:
+        file: "release/fluentd-dev-release.tgz"
+        acl: public-read
+
+- name: create-final-release
+  serial_groups:
+    - version
+  plan:
+    - in_parallel:
+      - get: fluentd-boshrelease
+        passed:
+        - create-release
+        trigger: true
+      - get: version
+    - task: create-final-release
+      file: fluentd-boshrelease/ci/tasks/create-final.yml
+      params:
+        AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+        AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+    - put: final-release
+      params:
+        file: final-release/fluentd-final-release-*.tgz
+        acl: public-read
+
+- name: finalize-release
+  serial_groups:
+    - version
+  plan:
+    - in_parallel:
+      - get: fluentd-boshrelease
+        passed:
+        - create-final-release
+        trigger: true
+      - get: final-release
+        passed:
+        - create-final-release
+        trigger: true
+      - get: version
+        passed:
+        - create-final-release
+    - task: finalize-release
+      file: fluentd-boshrelease/ci/tasks/finalize-release.yml
+      params:
+        AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+        AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+    - put: fluentd-boshrelease-push
+      params:
+        rebase: true
+        repository: final-fluentd-boshrelease
+    - put: version
+      params:
+        bump: patch
+
+- name: bump-minor
+  serial_groups:
+    - version
+  plan:
+    - put: version
+      params:
+        bump: minor
