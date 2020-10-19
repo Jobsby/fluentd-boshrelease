@@ -1,0 +1,14 @@
+---
+platform: linux
+
+inputs:
+- name: fluentd-boshrelease
+
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_ID:
+  AWS_DEFAULT_REGION:
+  BUCKET:
+
+run:
+  path: fluentd-boshrelease/ci/tasks/create-bucket.sh

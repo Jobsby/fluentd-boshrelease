@@ -87,13 +87,23 @@ jobs:
 - name: create-buckets
   serial: true
   plan:
-  - get: fluentd-boshrelease
-    trigger: true
-    passed:
-    - set-pipeline
+  - in_parallel:
+    - get: fluentd-boshrelease
+      trigger: true
+      passed:
+      - set-pipeline
+    - get: pcfops-image
+  - task: create-state-bucket
+    file: fluentd-boshrelease/ci/tasks/create-bucket.yml
+    image: pcfops-image
+    params:
+      AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+      AWS_DEFAULT_REGION: eu-west-1
+      BUCKET: fluentd-boshrelease-ci
   - put: ci-tf
     params:
-      env_name: whevs
+      env_name: fluent
 
 - name: vendor-ruby
   serial: true
