@@ -52,7 +52,7 @@ resources:
     backend_type: s3
     backend_config:
       bucket: fluentd-ci
-      key: /terraform/terraform.tfstate
+      key: terraform/terraform.tfstate
       access_key: ((concourse_ci_s3_access_key))
       secret_key: ((concourse_ci_s3_secret_key))
       region: eu-west-1
