@@ -1,0 +1,5 @@
+check process fluentd
+  with pidfile /var/vcap/sys/run/bpm/fluentd/fluentd.pid
+  start program "/var/vcap/jobs/bpm/bin/bpm start fluentd"
+  stop program "/var/vcap/jobs/bpm/bin/bpm stop fluentd"
+  group vcap

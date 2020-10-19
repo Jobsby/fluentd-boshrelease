@@ -1,0 +1,8 @@
+---
+name: fluentd
+
+dependencies:
+- ruby-2.7.2-r0.38.0
+
+files:
+- fluentd/**/* # make sure to run bundle before

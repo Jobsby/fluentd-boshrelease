@@ -1,0 +1,19 @@
+---
+name: fluentd
+
+templates:
+  bpm.yml.erb: config/bpm.yml
+  fluent.conf.erb: config/fluent.conf
+  start.sh.erb: bin/start.sh
+
+packages:
+- fluentd
+- ruby-2.7.2-r0.38.0
+
+properties:
+  fluent.conf:
+      description: |
+        Contents of fluent.conf
+        https://docs.fluentd.org/input/syslog
+        https://docs.fluentd.org/output/s3
+        https://docs.fluentd.org/configuration/buffer-section
