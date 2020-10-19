@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "blobstore" {
 }
 
 resource "aws_s3_bucket_policy" "blob-public-read" {
-  bucket = "aws_s3_bucket.blobstore.id"
+  bucket = aws_s3_bucket.blobstore.id
 
   policy = <<POLICY
 {
