@@ -18,8 +18,9 @@ pushd $VENDORED_REPO
 
   bosh vendor-package ruby-2.7.2-r0.38.0 ../ruby-release
 
-  git add -A
-  git status
-
-  git commit -m "Vendoring ruby"
+  status="$(git status --porcelain)"
+  if [ -n "$status" ]; then
+    git add -A
+    git commit -m "Vendoring ruby"
+  fi
 popd
