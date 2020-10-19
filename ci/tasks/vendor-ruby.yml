@@ -1,0 +1,12 @@
+---
+platform: linux
+
+inputs:
+- name: fluentd-boshrelease
+- name: ruby-release
+
+outputs:
+- name: vendored-fluentd-boshrelease
+
+run:
+  path: fluentd-boshrelease/ci/tasks/vendor-ruby.sh

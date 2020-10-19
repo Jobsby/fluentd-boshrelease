@@ -23,6 +23,13 @@ resources:
     branch: master
     private_key: ((github_private_key))
 
+- name: ruby-release
+  type: git
+  source:
+    uri: git@github.com:bosh-packages/ruby-release.git
+    branch: master
+    private_key: ((github_private_key))
+
 - name: version
   type: semver
   source:
@@ -60,6 +67,13 @@ resources:
     env:
       AWS_ACCESS_KEY_ID: ((aws_access_key_id))
       AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+      AWS_DEFAULT_REGION: eu-west-1
+
+- name: pcfops-image
+  type: registry-image
+  source:
+    repository: engineerbetter/pcf-ops
+    tag: latest
 
 jobs:
 - name: set-pipeline
@@ -81,69 +95,98 @@ jobs:
     params:
       env_name: whevs
 
-- name: create-release
+- name: vendor-ruby
+  serial: true
   plan:
+  - in_parallel:
     - get: fluentd-boshrelease
       trigger: true
       passed:
       - create-buckets
-    - task: create
-      file: fluentd-boshrelease/ci/tasks/create-candidate.yml
-    - put: candidate-release
-      params:
-        file: "release/fluentd-dev-release.tgz"
-        acl: public-read
+    - get: ruby-release
+    - get: pcfops-image
+  - task: vendor-ruby
+    file: fluentd-boshrelease/ci/tasks/vendor-ruby.yml
+    image: pcfops-image
+  - put: fluentd-boshrelease-push
+    params:
+      rebase: true
+      repository: vendored-fluentd-boshrelease
+
+- name: create-release
+  serial: true
+  plan:
+  - in_parallel:
+    - get: fluentd-boshrelease
+      trigger: true
+      passed:
+      - vendor-ruby
+    - get: pcfops-image
+  - task: create
+    file: fluentd-boshrelease/ci/tasks/create-candidate.yml
+    image: pcfops-image
+  - put: candidate-release
+    params:
+      file: "release/fluentd-dev-release.tgz"
+      acl: public-read
 
 - name: create-final-release
+  serial: true
   serial_groups:
     - version
   plan:
-    - in_parallel:
-      - get: fluentd-boshrelease
-        passed:
-        - create-release
-        trigger: true
-      - get: version
-    - task: create-final-release
-      file: fluentd-boshrelease/ci/tasks/create-final.yml
-      params:
-        AWS_ACCESS_KEY_ID: ((aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
-    - put: final-release
-      params:
-        file: final-release/fluentd-final-release-*.tgz
-        acl: public-read
+  - in_parallel:
+    - get: fluentd-boshrelease
+      passed:
+      - create-release
+      trigger: true
+    - get: version
+    - get: pcfops-image
+  - task: create-final-release
+    file: fluentd-boshrelease/ci/tasks/create-final.yml
+    image: pcfops-image
+    params:
+      AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+  - put: final-release
+    params:
+      file: final-release/fluentd-final-release-*.tgz
+      acl: public-read
 
 - name: finalize-release
+  serial: true
   serial_groups:
     - version
   plan:
-    - in_parallel:
-      - get: fluentd-boshrelease
-        passed:
-        - create-final-release
-        trigger: true
-      - get: final-release
-        passed:
-        - create-final-release
-        trigger: true
-      - get: version
-        passed:
-        - create-final-release
-    - task: finalize-release
-      file: fluentd-boshrelease/ci/tasks/finalize-release.yml
-      params:
-        AWS_ACCESS_KEY_ID: ((aws_access_key_id))
-        AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
-    - put: fluentd-boshrelease-push
-      params:
-        rebase: true
-        repository: final-fluentd-boshrelease
-    - put: version
-      params:
-        bump: patch
+  - in_parallel:
+    - get: fluentd-boshrelease
+      passed:
+      - create-final-release
+      trigger: true
+    - get: final-release
+      passed:
+      - create-final-release
+      trigger: true
+    - get: version
+      passed:
+      - create-final-release
+    - get: pcfops-image
+  - task: finalize-release
+    file: fluentd-boshrelease/ci/tasks/finalize-release.yml
+    image: pcfops-image
+    params:
+      AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+  - put: fluentd-boshrelease-push
+    params:
+      rebase: true
+      repository: final-fluentd-boshrelease
+  - put: version
+    params:
+      bump: patch
 
 - name: bump-minor
+  serial: true
   serial_groups:
     - version
   plan:

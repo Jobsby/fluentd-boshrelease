@@ -1,6 +1,4 @@
-provider "aws" {
-  region = "eu-west-1"
-}
+provider "aws" {}
 
 resource "aws_s3_bucket" "ci" {
   bucket        = "fluentd-ci"
@@ -12,8 +10,14 @@ resource "aws_s3_bucket" "ci" {
   }
 }
 
-data "aws_s3_bucket" "blobstore" {
-  bucket = "fluentd-blobstore"
+resource "aws_s3_bucket" "blobstore" {
+  bucket        = "fluentd-blobstore"
+  acl           = "public-read"
+  force_destroy = true
+
+  versioning {
+    enabled = true
+  }
 }
 
 resource "aws_s3_bucket_policy" "blob-public-read" {
