@@ -20,6 +20,7 @@ pushd $VENDORED_REPO
 
   status="$(git status --porcelain)"
   if [ -n "$status" ]; then
+    date >> vendored-ruby-log
     git add -A
     git commit -m "Vendoring ruby"
   fi

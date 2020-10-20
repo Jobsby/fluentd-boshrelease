@@ -1,0 +1,4 @@
+# We generally want to ignore changes to .final_builds in the pipeline
+# so that finalizing the release doesn't continuously re-trigger the pipeline
+# but we need to update .final_builds when we update the ruby vendoring
+# so we append a timestamp to this file when we re-vendor ruby
