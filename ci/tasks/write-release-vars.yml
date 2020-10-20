@@ -1,0 +1,12 @@
+---
+platform: linux
+
+inputs:
+- name: fluentd-boshrelease
+- name: version
+
+outputs:
+- name: release-vars
+
+run:
+  path: fluentd-boshrelease/ci/tasks/write-release-vars.sh

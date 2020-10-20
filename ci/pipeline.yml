@@ -30,6 +30,13 @@ resources:
     branch: master
     private_key: ((github_private_key))
 
+- name: fluentd-github-release
+  type: github-release
+  source:
+    owner: EngineerBetter
+    repository: fluentd-boshrelease
+    access_token: ((github_access_token))
+
 - name: version
   type: semver
   source:
@@ -180,6 +187,8 @@ jobs:
     - get: version
       passed:
       - create-final-release
+      params:
+        bump: patch
     - get: pcfops-image
   - task: finalize-release
     file: fluentd-boshrelease/ci/tasks/finalize-release.yml
@@ -191,9 +200,22 @@ jobs:
     params:
       rebase: true
       repository: final-fluentd-boshrelease
+  - task: write-release-vars
+    file: fluentd-boshrelease-push/ci/tasks/write-release-vars.yml
+    image: pcfops-image
+    input_mapping:
+      fluentd-boshrelease: fluentd-boshrelease-push
+  - put: fluentd-github-release
+    params:
+      name: release-vars/name
+      commitish: release-vars/commit
+      body: release-vars/body
+      tag: version/version
+      globs:
+      - final-release/fluentd-final-release-*.tgz
   - put: version
     params:
-      bump: patch
+      file: version/version
 
 - name: bump-minor
   serial: true
