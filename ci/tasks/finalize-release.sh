@@ -29,6 +29,14 @@ pushd $PROMOTED_REPO
   git checkout master
   git status
 
+  cat >> config/private.yml <<EOF
+---
+blobstore:
+  provider: s3
+  options:
+    credentials_source: env_or_profile
+EOF
+
   bosh finalize-release --version $VERSION $FINAL_RELEASE_PATH
 
   git add -A
