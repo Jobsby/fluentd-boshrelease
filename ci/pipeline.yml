@@ -15,6 +15,7 @@ resources:
     ignore_paths:
     - .final_builds/
     - releases/
+    - README.md
 
 - name: fluentd-boshrelease-push
   type: git
