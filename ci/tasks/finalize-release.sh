@@ -31,8 +31,9 @@ EOF
 
   bosh finalize-release --version "${VERSION}" "${FINAL_RELEASE_PATH}"
 
-  git add -A
-  git status
-
-  git commit -m "Adding final release $VERSION via concourse"
+  status="$(git status --porcelain)"
+  if [ -n "$status" ]; then
+    git add -A
+    git commit -m "Adding final release $VERSION via concourse"
+  fi
 popd
