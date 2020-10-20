@@ -158,6 +158,8 @@ jobs:
       - create-release
       trigger: true
     - get: version
+      params:
+        bump: patch
     - get: pcfops-image
   - task: create-final-release
     file: fluentd-boshrelease/ci/tasks/create-final.yml

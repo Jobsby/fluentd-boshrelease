@@ -3,23 +3,21 @@
 set -euo pipefail
 
 VERSION=$(cat version/number)
-cp version/number bumped-version/number
 
-export ROOT_PATH=$PWD
-PROMOTED_REPO=$PWD/final-fluentd-boshrelease
+root_path=$PWD
+promoted_repo=${root_path}/final-fluentd-boshrelease
 
-export FINAL_RELEASE_PATH="${ROOT_PATH}/final-release/*.tgz"
+final_release_path="${root_path}/final-release/fluentd-final-release-$(cat version/version).tgz"
 
 git config --global user.email "ci@localhost"
 git config --global user.name "CI Bot"
 
-git clone ./fluentd-boshrelease "${PROMOTED_REPO}"
+git clone ./fluentd-boshrelease "${promoted_repo}"
 
-pushd "${PROMOTED_REPO}"
-  git status
-
+pushd "${promoted_repo}"
+  git status --porcelain
   git checkout master
-  git status
+  git status --porcelain
 
   cat >> config/private.yml <<EOF
 ---
@@ -29,7 +27,7 @@ blobstore:
     credentials_source: env_or_profile
 EOF
 
-  bosh finalize-release --version "${VERSION}" "${FINAL_RELEASE_PATH}"
+  bosh finalize-release --version "${VERSION}" "${final_release_path}"
 
   status="$(git status --porcelain)"
   if [ -n "$status" ]; then
