@@ -1,0 +1,24 @@
+name: fluentd
+version: 0.0.5
+commit_hash: 7eaf69f
+uncommitted_changes: false
+jobs:
+- name: fluentd
+  version: 6d0a139dde6ff3e98950801f15a3b0880b75b21c5a0a5a942ea4c75c3415e34e
+  fingerprint: 6d0a139dde6ff3e98950801f15a3b0880b75b21c5a0a5a942ea4c75c3415e34e
+  sha1: sha256:f27a4a03e02a0cbfdc23a91b3e8cbe90444aa57c9d0c14578fcabeba9a51ca86
+  packages:
+  - fluentd
+  - ruby-2.7.2-r0.38.0
+packages:
+- name: fluentd
+  version: db67a1ee057fa479d9f852d7eeb76c409e45c609adc56de06c14e9c99bc328be
+  fingerprint: db67a1ee057fa479d9f852d7eeb76c409e45c609adc56de06c14e9c99bc328be
+  sha1: sha256:eaf29565405157cd73b67b548fbea6a6c56d850ceedb6ac53c018d4f04b57f06
+  dependencies:
+  - ruby-2.7.2-r0.38.0
+- name: ruby-2.7.2-r0.38.0
+  version: 51442628bb838295ce3bd6153d555f63af0c0d4137fe471819045ad99a862156
+  fingerprint: 51442628bb838295ce3bd6153d555f63af0c0d4137fe471819045ad99a862156
+  sha1: sha256:1867f851756dc8a89ccbe4d0fbed08d4ed9eaeb864056fc28fa45253a01df5ee
+  dependencies: []
