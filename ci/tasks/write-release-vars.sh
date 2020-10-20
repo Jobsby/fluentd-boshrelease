@@ -7,7 +7,7 @@ name="fluentd-boshrelease v${version}"
 
 echo "${name}" > release-vars/name
 
-pushd control-tower
+pushd fluentd-boshrelease
   commit=$(git rev-parse HEAD)
 popd
 
