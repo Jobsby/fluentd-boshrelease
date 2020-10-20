@@ -4,6 +4,7 @@ platform: linux
 inputs:
 - name: fluentd-boshrelease
 - name: version
+- name: final-release
 
 outputs:
 - name: release-vars
