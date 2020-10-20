@@ -6,4 +6,4 @@ export ROOT_PATH=$PWD
 
 cd fluentd-boshrelease
 
-bosh create-release --tarball=../release/fluentd-dev-release.tgz --timestamp-version --force
+bosh create-release --tarball="${ROOT_PATH}/release/fluentd-dev-release.tgz" --timestamp-version --force
