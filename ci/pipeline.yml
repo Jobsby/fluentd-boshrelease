@@ -1,9 +1,10 @@
 ---
 resource_types:
 - name: terraform
-  type: docker-image
+  type: registry-image
   source:
     repository: ljfranklin/terraform-resource
+    tag: latest
 
 resources:
 - name: fluentd-boshrelease
