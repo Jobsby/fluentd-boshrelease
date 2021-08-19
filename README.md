@@ -8,17 +8,31 @@ This release has been designed specifically for the usecase of shipping logs fro
 
 ```yaml
 releases:
-...
-- name:    fluentd
-  version: 0.0.4
-  url:     https://github.com/EngineerBetter/fluentd-boshrelease/releases/download/0.0.4/fluentd-final-release-0.0.4.tgz
-  sha1:    cfb082426b2e76a224ee1354fc42f1f66a05a49b
+- name: fluentd
+  version: 0.0.8
+  url: https://github.com/EngineerBetter/fluentd-boshrelease/releases/download/0.0.8/fluentd-final-release-0.0.8.tgz
+  sha1: 5fa32aa732ada61d14ce7f054fe08bd1bc8ac57e
+- name: "bpm"
+  version: "1.1.13"
+  url: "https://bosh.io/d/github.com/cloudfoundry/bpm-release?v=1.1.13"
+  sha1: "82322898b2393951108617caac43752e498632a2"
 
-jobs:
-- name: web
+stemcells:
+- alias: default
+  os: ubuntu-bionic
+  version: "1.22"
+
+instance_groups:
+- name: fluentd
+  stemcell: default
+  vm_type: small
+  networks:
+  - name: default
+  azs: [z1]
+  instances: 1
   jobs:
-  - name: web
-    release: concourse
+  - name: bpm
+    release: bpm
   - name: fluentd
     release: fluentd
     properties:
@@ -70,6 +84,12 @@ jobs:
               ip_address 169.254.169.254
               port 80
             </instance_profile_credentials>
-
           </match>
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+  initial_deploy_az_update_strategy: serial
 ```
