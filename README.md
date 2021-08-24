@@ -133,3 +133,12 @@ and configure the path of the certificates as described below:
                 client_cert_auth false
               </transport>
 ```
+
+## Tests
+
+You can run the tests with bundle:
+
+```bash
+bundle install
+bundle exec rspec spec/
+```
