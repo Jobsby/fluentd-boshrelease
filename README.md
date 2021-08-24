@@ -93,3 +93,43 @@ update:
   update_watch_time: 1000-30000
   initial_deploy_az_update_strategy: serial
 ```
+
+### Configure TLS
+
+You can configure tls by adding the certificates to the properties section
+
+```yaml
+      properties:
+        cert:
+          ca: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+          crt: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+          key: |
+            -----BEGIN PRIVATE KEY-----
+            ...
+            -----END PRIVATE KEY-----
+```
+
+and configure the path of the certificates as described below:
+
+```yaml
+              <transport tls>
+                version TLSv1_2
+                ciphers ALL:!aNULL:!eNULL:!SSLv2
+                insecure false
+
+                # For Cert signed by public CA
+                ca_path /var/vcap/jobs/fluentd/certs/ca.crt
+                cert_path /var/vcap/jobs/fluentd/certs/cert.crt
+                private_key_path /var/vcap/jobs/fluentd/certs/cert.key
+                client_cert_auth false
+              </transport>
+```

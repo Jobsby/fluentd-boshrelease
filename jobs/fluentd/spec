@@ -5,6 +5,9 @@ templates:
   bpm.yml.erb: config/bpm.yml
   fluent.conf.erb: config/fluent.conf
   start.sh.erb: bin/start.sh
+  certs/ca.crt.erb: certs/ca.crt
+  certs/cert.crt.erb: certs/cert.crt
+  certs/cert.key.erb: certs/cert.key
 
 packages:
 - fluentd
@@ -17,3 +20,21 @@ properties:
         https://docs.fluentd.org/input/syslog
         https://docs.fluentd.org/output/s3
         https://docs.fluentd.org/configuration/buffer-section
+  cert.ca:
+      description: |
+        Information on configuring TLS
+        https://docs.fluentd.org/configuration/transport-section
+        https://docs.fluentd.org/plugin-helper-overview/api-plugin-helper-server#configuration-example
+      default: ""
+  cert.crt:
+      description: |
+        Information on configuring TLS
+        https://docs.fluentd.org/configuration/transport-section
+        https://docs.fluentd.org/plugin-helper-overview/api-plugin-helper-server#configuration-example
+      default: ""
+  cert.key:
+      description: |
+        Information on configuring TLS
+        https://docs.fluentd.org/configuration/transport-section
+        https://docs.fluentd.org/plugin-helper-overview/api-plugin-helper-server#configuration-example
+      default: ""
