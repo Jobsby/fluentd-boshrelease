@@ -8,5 +8,9 @@ inputs:
 outputs:
 - name: vendored-fluentd-boshrelease
 
+params:
+  AWS_ACCESS_KEY_ID:
+  AWS_SECRET_ACCESS_KEY:
+
 run:
   path: fluentd-boshrelease/ci/tasks/vendor-ruby.sh

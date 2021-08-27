@@ -23,6 +23,14 @@ pushd "${VENDORED_REPO}"
   git checkout master
   git status
 
+  cat >> config/private.yml <<EOF
+---
+blobstore:
+  provider: s3
+  options:
+    credentials_source: env_or_profile
+EOF
+
   bosh vendor-package "${latest_ruby_version_full}" ../ruby-release
 
   status="$(git status --porcelain)"
