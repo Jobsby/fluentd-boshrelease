@@ -8,15 +8,22 @@ VENDORED_REPO=$PWD/vendored-fluentd-boshrelease
 git config --global user.email "ci@localhost"
 git config --global user.name "CI Bot"
 
-git clone ./fluentd-boshrelease $VENDORED_REPO
+git clone ./fluentd-boshrelease "${VENDORED_REPO}"
 
-pushd $VENDORED_REPO
+pushd ruby-release
+  latest_ruby_version="$(bosh blobs | grep ruby-3 | cut -d . -f 1-3 | sort | tail -1)"
+  # I wanted to do `grep name packages/ruby-${latest_ruby_version}-r*/spec`
+  # but globbing didn't seem to work in the container
+  latest_ruby_version_full="$(find packages -type d | awk -F/ -v ruby_version="${latest_ruby_version}" '($0 ~ ruby_version){print $2}')"
+popd
+
+pushd "${VENDORED_REPO}"
   git status
 
   git checkout master
   git status
 
-  bosh vendor-package ruby-2.7.2-r0.38.0 ../ruby-release
+  bosh vendor-package "${latest_ruby_version_full}" ../ruby-release
 
   status="$(git status --porcelain)"
   if [ -n "$status" ]; then
