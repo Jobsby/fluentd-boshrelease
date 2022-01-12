@@ -11,7 +11,7 @@ templates:
 
 packages:
 - fluentd
-- ruby-3.0.2-r0.61.0
+- ruby-3.0.3-r0.79.0
 
 properties:
   command_line_args:

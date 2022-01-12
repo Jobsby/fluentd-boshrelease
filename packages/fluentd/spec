@@ -2,7 +2,7 @@
 name: fluentd
 
 dependencies:
-- ruby-3.0.2-r0.61.0
+- ruby-3.0.3-r0.79.0
 
 files:
 - fluentd/**/* # make sure to run bundle before
