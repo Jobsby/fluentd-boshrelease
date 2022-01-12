@@ -1,6 +1,6 @@
 set -e
 
-source /var/vcap/packages/ruby-2.7.2-r0.38.0/bosh/compile.env
+source /var/vcap/packages/ruby-3.0.2-r0.61.0/bosh/compile.env
 
 cp -R fluentd/{Gemfile,Gemfile.lock,vendor} ${BOSH_INSTALL_TARGET}
 cd ${BOSH_INSTALL_TARGET}
