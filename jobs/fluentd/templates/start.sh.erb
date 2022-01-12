@@ -4,4 +4,4 @@ set -euo pipefail
 
 source /var/vcap/packages/ruby-2.7.2-r0.38.0/bosh/compile.env
 
-/var/vcap/packages/fluentd/bin/fluentd --config /var/vcap/jobs/fluentd/config/fluent.conf --no-supervisor
+/var/vcap/packages/fluentd/bin/fluentd --config /var/vcap/jobs/fluentd/config/fluent.conf $@

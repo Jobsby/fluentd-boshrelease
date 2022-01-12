@@ -1,3 +1,4 @@
 processes:
 - name: fluentd
   executable: /var/vcap/jobs/fluentd/bin/start.sh
+  args: <%= p("command_line_args") %>
