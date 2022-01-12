@@ -42,7 +42,12 @@ GEM
       yajl-ruby (~> 1.0)
     http_parser.rb (0.8.0)
     jmespath (1.5.0)
+    mini_portile2 (2.7.1)
     msgpack (1.4.2)
+    nokogiri (1.13.0)
+      mini_portile2 (~> 2.7.0)
+      racc (~> 1.4)
+    racc (1.6.0)
     serverengine (2.2.4)
       sigdump (~> 0.2.2)
     sigdump (0.2.4)
@@ -61,6 +66,7 @@ DEPENDENCIES
   fluent-plugin-detect-exceptions (~> 0.0.14)
   fluent-plugin-s3 (= 1.6.1)
   fluentd (= 1.14.4)
+  nokogiri
 
 BUNDLED WITH
    2.2.22
