@@ -13,4 +13,4 @@ params:
 
 run:
   dir: fluentd-boshrelease
-  path: fluentd-boshrelease/ci/tasks/update-fluentd.sh
+  path: ci/tasks/update-fluentd.sh
