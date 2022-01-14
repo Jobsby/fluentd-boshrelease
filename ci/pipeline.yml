@@ -155,7 +155,7 @@ jobs:
       trigger: true
     - get: pcfops-image
   - task: package-fluentd
-    file: fluentd-boshrelease-gemfile/ci/tasks/package-fluentd.yml
+    file: fluentd-boshrelease/ci/tasks/package-fluentd.yml
     image: pcfops-image
     params:
       AWS_ACCESS_KEY_ID: ((aws_access_key_id))
