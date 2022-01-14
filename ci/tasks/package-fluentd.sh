@@ -10,5 +10,5 @@ git config --global user.name "CI Bot"
 status="$(git status --porcelain)"
 if [ -n "$status" ]; then
     git add config/blobs.yml
-    git commit -m "Updating fluentd.tgz blob with versions from $BUNDLE_GEMFILE"
+    git commit -m "Updating fluentd.tgz blob with versions from fluentd.Gemfile"
 fi
