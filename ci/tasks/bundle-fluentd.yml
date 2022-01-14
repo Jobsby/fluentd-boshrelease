@@ -3,7 +3,7 @@ image_resource:
   type: registry-image
   source:
     repository: ruby
-    tag: 3.0
+    tag: "3.0"
 inputs:
   - name: fluentd-boshrelease
 outputs:
