@@ -150,14 +150,13 @@ jobs:
   serial: true
   plan:
   - in_parallel:
+    - get: fluentd-boshrelease
     - get: fluentd-boshrelease-gemfile
       trigger: true
     - get: pcfops-image
   - task: package-fluentd
     file: fluentd-boshrelease-gemfile/ci/tasks/package-fluentd.yml
     image: pcfops-image
-    input_mapping:
-      fluentd-boshrelease: fluentd-boshrelease-gemfile
     params:
       AWS_ACCESS_KEY_ID: ((aws_access_key_id))
       AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
