@@ -1,0 +1,21 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: ruby:3-slim
+inputs:
+  - name: fluentd-boshrelease
+outputs:
+  - name: fluentd-boshrelease
+params:
+  BUNDLE_GEMFILE: fluentd.Gemfile
+run:
+  dir: fluentd-boshrelease
+  path: bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      bundle package
+      bundle info fluentd --path > fluentd.version
