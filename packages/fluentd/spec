@@ -5,4 +5,4 @@ dependencies:
 - ruby-3.0.3-r0.79.0
 
 files:
-- fluentd/**/* # make sure to run bundle before
+- fluentd.tgz

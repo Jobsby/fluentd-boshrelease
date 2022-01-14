@@ -1,11 +1,13 @@
 set -e
 
-source /var/vcap/packages/ruby-3.0.3-r0.79.0/bosh/compile.env
+source /var/vcap/packages/ruby-*/bosh/compile.env
 
-cp -R fluentd/{Gemfile,Gemfile.lock,vendor} ${BOSH_INSTALL_TARGET}
+tar -xvf fluentd.tgz
+cp -R ./{fluentd.Gemfile,fluentd.Gemfile.lock,vendor} ${BOSH_INSTALL_TARGET}
 cd ${BOSH_INSTALL_TARGET}
 
 bundle install \
+  --gemfile fluentd.Gemfile \
   --local \
   --deployment \
   --without development test \

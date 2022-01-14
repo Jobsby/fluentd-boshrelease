@@ -17,6 +17,19 @@ resources:
     - .final_builds/
     - releases/
     - README.md
+    # Updates to these files will become config/blobs.yml changes by the package-fluentd job
+    - fluentd.Gemfile
+    - fluentd.Gemfile.lock
+
+- name: fluentd-boshrelease-gemfile
+  type: git
+  source:
+    uri: git@github.com:EngineerBetter/fluentd-boshrelease.git
+    branch: master
+    private_key: ((github_private_key))
+    paths:
+    - fluentd.Gemfile
+    - fluentd.Gemfile.lock
 
 - name: fluentd-boshrelease-push
   type: git
@@ -114,15 +127,13 @@ jobs:
     params:
       env_name: fluent
 
-- name: vendor-ruby
+- name: update-vendored-ruby
   serial: true
   plan:
   - in_parallel:
     - get: fluentd-boshrelease
-      trigger: true
-      passed:
-      - create-buckets
     - get: ruby-release
+      trigger: true
     - get: pcfops-image
   - task: vendor-ruby
     file: fluentd-boshrelease/ci/tasks/vendor-ruby.yml
@@ -135,6 +146,26 @@ jobs:
       rebase: true
       repository: vendored-fluentd-boshrelease
 
+- name: update-fluentd-blob
+  serial: true
+  plan:
+  - in_parallel:
+    - get: fluentd-boshrelease-gemfile
+      trigger: true
+    - get: pcfops-image
+  - task: package-fluentd
+    file: fluentd-boshrelease/ci/tasks/package-fluentd.yml
+    image: pcfops-image
+    input_mapping:
+      fluentd-boshrelease: fluentd-boshrelease-gemfile
+    params:
+      AWS_ACCESS_KEY_ID: ((aws_access_key_id))
+      AWS_SECRET_ACCESS_KEY: ((aws_secret_access_key))
+  - put: fluentd-boshrelease-push
+    params:
+      rebase: true
+      repository: fluentd-boshrelease
+
 - name: create-release
   serial: true
   plan:
@@ -142,7 +173,7 @@ jobs:
     - get: fluentd-boshrelease
       trigger: true
       passed:
-      - vendor-ruby
+      - create-buckets
     - get: pcfops-image
   - task: create
     file: fluentd-boshrelease/ci/tasks/create-candidate.yml
