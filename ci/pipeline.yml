@@ -154,7 +154,7 @@ jobs:
       trigger: true
     - get: pcfops-image
   - task: package-fluentd
-    file: fluentd-boshrelease/ci/tasks/package-fluentd.yml
+    file: fluentd-boshrelease-gemfile/ci/tasks/package-fluentd.yml
     image: pcfops-image
     input_mapping:
       fluentd-boshrelease: fluentd-boshrelease-gemfile
