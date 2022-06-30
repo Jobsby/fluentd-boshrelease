@@ -11,7 +11,7 @@ git config --global user.name "CI Bot"
 git clone ./fluentd-boshrelease "${VENDORED_REPO}"
 
 pushd ruby-release
-  latest_ruby_version="$(bosh blobs | grep ruby-3 | cut -d . -f 1-3 | sort | tail -1)"
+  latest_ruby_version="$(bosh blobs | grep ruby-3 | cut -d . -f 1-2 | sort | tail -1)"
   # I wanted to do `grep name packages/ruby-${latest_ruby_version}-r*/spec`
   # but globbing didn't seem to work in the container
   latest_ruby_version_full="$(find packages -type d | awk -F/ -v ruby_version="${latest_ruby_version}" '($0 ~ ruby_version){print $2}')"
