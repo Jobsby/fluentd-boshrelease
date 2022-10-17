@@ -55,6 +55,8 @@ builds:
     version: 0.0.14
   d7580eed-cdb9-4f01-484e-eb48e529160f:
     version: 0.0.9
+  dd9a79f6-636c-4755-6483-3cf447c89c78:
+    version: 0.0.35
   e23ecc4d-d02b-4786-55ce-a842abaf3d9c:
     version: 0.0.17
   e2e73856-ac8e-4ad6-5b99-e214f80ba686:
